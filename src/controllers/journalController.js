@@ -6,37 +6,30 @@ import { validationResult } from 'express-validator';
 
 export const addNewJournal = async(req, res, next) => {
 
-    const  { title, publisher, worldOfScience, journalCitationResult, coverageArea } = req.body;
-
-    const errors = validationResult(req)
-
-    // throws an error if the details are not valid
-    if(!errors.isEmpty()) {
-
-        return res.status(400).json({ errors: errors.array(msg) })
-
-    }
+    const  { title, publisher, issn, e_issn, journalPrimaryLang, journalSecondaryLang, journalHomePageUrl, worldOfScience, journalCitationResult, coverageArea, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear,
+    journalRecentIssue, journalPeerPolicy, editorialName, editorialPhone, editorialEmail, editorialJobTitle, publisherCountry, publisherAddress, publicationModel, publicationOwner, journalConjunction } = req.body;
 
 
     try {
         let journal = await Journal.findOne({
-            where: { title, publisher, worldOfScience, journalCitationResult, coverageArea}
+            where: { title, publisher }
         });
 
-        if(journal){
-            res.status(400).json({errors: [{msg: 'This journal already exists in our journal collection'}]})
-
-        }
-
-        const newJournal = new Journal({ title, publisher, worldOfScience, journalCitationResult, coverageArea })
+        const newJournal = new Journal({ title, publisher, issn, e_issn, journalPrimaryLang, journalSecondaryLang, journalHomePageUrl, worldOfScience, journalCitationResult, coverageArea, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear,
+            journalRecentIssue, journalPeerPolicy, editorialName, editorialPhone, editorialEmail, editorialJobTitle, publisherCountry, publisherAddress, publicationModel, publicationOwner, journalConjunction })
 
 
 
-        await newJournal.save();
+        journal ?  res.status(400).json({errors: [{msg: 'This journal already exists in our journal collection'}]}) :
 
-        res.status(201).json({
-            msg: 'Journal created successfully'
-        })
+
+            await newJournal.save();
+
+            res.status(201).json({
+                msg: ' New Journal created successfully'
+            })
+            console.log(req.body);
+
 
 
     } catch (err) {

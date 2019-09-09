@@ -6,6 +6,7 @@ import userRouter from './routers/api/users';
 import auth from './routers/api/auth';
 import journals from './routers/api/journals';
 import profile from './routers/api/profile';
+import adminRouter from './routers/api/admin';
 
 const app = express();
 
@@ -15,6 +16,7 @@ const app = express();
 app.use(express.json( { extende: false}))
 // define routes
 app.use('/api/users', userRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/auth', auth);
 app.use('/api/journals', journals);
 app.use('/api/profile', profile);

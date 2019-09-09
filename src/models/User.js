@@ -9,24 +9,30 @@ User.init({
         primaryKey: true,
         autoIncrement: true,
     },
-    name: {
+    firstName: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-  email: {
+    lastName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+
+    email: {
       type: Sequelize.STRING,
       unique: true,
       allowNull: false,
   },
+  jobTitle: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: false,
+},
   password: {
     type: Sequelize.STRING,
     allowNull: false
 
 },
-    avatar: {
-        type: Sequelize.STRING,
-    },
-
 
 },
  { sequelize, modelName: 'user', });

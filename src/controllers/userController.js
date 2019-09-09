@@ -2,7 +2,6 @@ import express from 'express';
 import { validationResult } from 'express-validator';
 import { userSignUpValidation, userLoginValidation } from '../Validators/validation'
 import User from '../models/User';
-import gravater from 'gravatar';
 import bcrypt from 'bcryptjs';
 require('dotenv').config();
 import jwt from 'jsonwebtoken';
@@ -22,7 +21,7 @@ export const userSignUp = (
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array(msg) })
     }
-        const {name, email, password } = req.body
+        const {firstName, lastName, jobTitle, email, password } = req.body
     try {
         // check if there is already a user with that request email and
         //throw error if it already exist
@@ -34,13 +33,9 @@ export const userSignUp = (
             res.status(400).json({errors: [{msg: 'User with this email already exist'}]})
         }
         // creates a new avatar or uses the one associated with the email provided
-        const avatar = gravater.url(email, {
-            size: '200',
-            rating: 'pg',
-            default: 'mm'
-        })
+
         // creates a new object of a user
-        user = new User({ name, email, avatar, password })
+        user = new User({ firstName, lastName, jobTitle, email, password  })
 
         // Encrypte the password before saving to DB
         const salt = await bcrypt.genSalt(15);

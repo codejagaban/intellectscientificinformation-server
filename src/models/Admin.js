@@ -9,7 +9,7 @@ Admin.init({
         primaryKey: true,
         autoIncrement: true,
     },
-    name: {
+    username: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -23,13 +23,11 @@ Admin.init({
     allowNull: false
 
 },
-    avatar: {
-        type: Sequelize.STRING,
-    },
+
 
 
 },
- { sequelize, modelName: 'user', });
+ { sequelize, modelName: 'admin', });
 
 sequelize.sync()
 
