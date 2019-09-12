@@ -4,9 +4,12 @@ import bodyParser from 'body-parser';
 import sequelize from './db';
 import userRouter from './routers/api/users';
 import auth from './routers/api/auth';
-import journals from './routers/api/journals';
+import journalsRouter from './routers/api/journals';
 import profile from './routers/api/profile';
 import adminRouter from './routers/api/admin';
+import Journals from './models/Journals';
+import User from './models/User';
+import coverageAreaRouter from './routers/api/journalCoverageArea';
 
 const app = express();
 
@@ -17,11 +20,19 @@ app.use(express.json( { extende: false}))
 // define routes
 app.use('/api/users', userRouter);
 app.use('/api/admin', adminRouter);
-app.use('/api/auth', auth);
-app.use('/api/journals', journals);
+app.use('/api/journals', journalsRouter);
+app.use('/api/coverage-area', coverageAreaRouter);
+
 app.use('/api/profile', profile);
 
 app.use(bodyParser.urlencoded({ extended: false}));
+
+
+
+// associates the data in the DB
+
+User.hasMany(Journals);
+
 
 
 const port = process.env.PORT || 5000 ;

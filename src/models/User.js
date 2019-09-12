@@ -25,7 +25,6 @@ User.init({
   },
   jobTitle: {
     type: Sequelize.STRING,
-    unique: true,
     allowNull: false,
 },
   password: {

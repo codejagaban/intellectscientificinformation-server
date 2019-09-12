@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const isAuth = (req, res, next) => {
     // get token from header
-    const token = req.header('x-auth-token');
+    const token = req.header('Authorization');
 
     // check if there is no token
     if(!token) {

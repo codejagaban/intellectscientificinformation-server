@@ -10,6 +10,8 @@ import jwt from 'jsonwebtoken';
 // @desc   Register Users
 // @access    Public
 
+
+
 // sign up a new user
 export const userSignUp = (
 
@@ -116,6 +118,23 @@ export const userLogin = async (req, res, next) => {
         console.log(err)
         res.status(500).send('Server Error');
     }
+
+}
+
+// get all users
+export const getUsers = async(req, res, next) => {
+
+    await User.findAll({ attributes: { exclude: ["password"] } })
+    .then(users => {
+        if(!users) {
+            res.status(404).json({msg: 'No user found'})
+        }
+
+        res.status(200).json({ users: users});
+    })
+
+
+
 
 
 
