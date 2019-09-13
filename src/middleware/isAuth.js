@@ -2,9 +2,13 @@ import jwt from 'jsonwebtoken';
 
 require('dotenv').config();
 
+
+
 const isAuth = (req, res, next) => {
-    // get token from header
-    const token = req.header('Authorization');
+      // get token from header
+const token = req.header('Authorization');
+
+
 
     // check if there is no token
     if(!token) {
@@ -25,6 +29,25 @@ const isAuth = (req, res, next) => {
 
 
 }
+export const isAdmin = (req, res, next) => {
+      // get token from header
+const token = req.header('Authorization');
 
+
+    //check if the user is am admin
+
+    try{
+        const decoded = jwt.verify(token, process.env.SECRET_JWT);
+        req.isAdmin = decoded.isAdmin;
+
+        next();
+    }
+    catch(err) {
+        res.status(403).json({msg: 'You do not have permission to view this route'})
+    }
+
+
+
+}
 
 export default isAuth;

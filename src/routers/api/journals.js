@@ -10,7 +10,7 @@ const journalsRouter = express.Router();
 
 journalsRouter.post('/new', addNewJournal);
 
-journalsRouter.get('/master-list', searchJournal);
+journalsRouter.get('/master-list/:page/journals/:search', searchJournal);
 
 journalsRouter.get('/all', getAllJournals);
 

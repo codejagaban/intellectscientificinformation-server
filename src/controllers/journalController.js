@@ -71,15 +71,16 @@ export const searchJournal = async (req, res, next) => {
 
     const page = req.params.page || 0; // Page
     const pageSize = req.params.pageSize || 5;
-    const search = {
-        // title: 'First',
-        coverageArea: 'zoology',
-        // journalCountry: 'United states',
-        // issn: '1234'
 
-    }
         // Declaring query based/search variables
-       const {title, coverageArea , issn,  journalCountry } = search  //req.query.search;
+       const  search = req.params.search || '1234';
+
+    const journalPrimaryLang = req.body.journalPrimaryLang || '';
+    const journalCountry = req.body.journalCountry || '';
+    const journalFrequency = req.body.journalFrequency || '';
+    const coverageArea = req.body.coverageArea || '';
+    const journalPeerPolicy = req.body.journalPeerPolicy || ''
+
 
 
        const paginate = ({ page, pageSize }) => {
@@ -93,22 +94,23 @@ export const searchJournal = async (req, res, next) => {
        }
 
 
+    //    create a search query based on inputs and querys from the user
        await Journal.findAndCountAll({
            where: {
             [Op.or]:
-              [ {title: {   [Op.substring]: title}},
-              {coverageArea: {   [Op.substring]: coverageArea}},
-              {journalCountry: {   [Op.substring]: journalCountry}},
-              {issn: {   [Op.substring]: issn}},
-             ]
+              [ {title: {   [Op.substring]: search}},
+              {coverageArea: {   [Op.substring]: search}},
+              {issn: {   [Op.substring]: search}},
+             ],
+             [Op.and]:
+             [
+            {journalCountry: {[Op.substring]: journalCountry}},
+             {journalFrequency: {[Op.substring]: journalFrequency }},
+             {journalPrimaryLang: {[Op.substring]: journalPrimaryLang }},
+             {coverageArea: {[Op.substring]: coverageArea }},
+             {journalPeerPolicy: {[Op.substring]: journalPeerPolicy }}
 
-
-            // [Op.or]:
-            // [{title: searchQuery || ''},
-            // {issn: searchQuery || ''},
-            // {coverageArea: searchQuery}],
-            // coverageArea: coverageArea || '',
-            // journalCountry: journalCountry || '',
+            ]
            },
            ...paginate({ page, pageSize }),
 
@@ -127,8 +129,9 @@ export const searchJournal = async (req, res, next) => {
        })
        .catch(err =>{
            res.status(500).json( {err});
-           throw new Error(err);
-        //    res.send(throw new Error(err))
+           console.log(err);
+
+           next()
 
        })
 

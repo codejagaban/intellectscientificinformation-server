@@ -45,6 +45,7 @@ export const adminSignUp = (
         await admin.save();
         const payload = {
             admin: admin.id,
+            isAdmin: admin.isAdmin
         }
         jwt.sign(
             payload,

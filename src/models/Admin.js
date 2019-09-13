@@ -23,6 +23,10 @@ Admin.init({
     allowNull: false
 
 },
+  isAdmin: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: true
+  }
 
 
 
