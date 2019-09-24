@@ -21,7 +21,7 @@ export const userSignUp = (
     const errors = validationResult(req);
     // throws errors is the request doesn't have the valid details
     if(!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array(msg) })
+        return res.status(400).json({ errors: errors.array() })
     }
         const {firstName, lastName, jobTitle, email, password } = req.body
     try {
@@ -108,7 +108,7 @@ export const userLogin = async (req, res, next) => {
             { expiresIn: 36000000 },
             (err, token)=> {
                 if(err) throw err;
-                res.json({ token, userId: user.id, email: user.email })
+                res.json({ token })
             })
 
         // Return jsonwebtoken

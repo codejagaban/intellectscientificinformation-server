@@ -1,6 +1,6 @@
 import express from 'express';
 import isAuth from '../../middleware/isAuth';
-import { addCoverageArea } from '../../controllers/journalCoverageAreaController';
+import { addCoverageArea, getAllCoverageArea } from '../../controllers/journalCoverageAreaController';
 
 const coverageAreaRouter = express.Router();
 
@@ -10,6 +10,9 @@ const coverageAreaRouter = express.Router();
 // @access    Public
 
 coverageAreaRouter.post('/new', addCoverageArea);
+
+
+coverageAreaRouter.get('/', getAllCoverageArea);
 
 export default coverageAreaRouter
 

@@ -29,3 +29,26 @@ export const addCoverageArea = async(req, res, next) => {
     }
 
 }
+
+
+
+//Get all coverageAreas
+
+export const getAllCoverageArea =  async (req, res, next) => {
+
+    CoverageArea.findAll({})
+
+    .then(response => {
+
+        res.status(200).json({ coverageAreas:response})
+        console.log(response)
+    })
+    .catch(err => {
+        res.status(500).json({err})
+
+        next();
+
+        console.log(err)
+    })
+
+}

@@ -4,8 +4,8 @@ import { userSignUp, userLogin, getUsers} from '../../controllers/userController
 import { userSignUpValidation, userLoginValidation } from '../../Validators/validation';
 import isAuth from '../../middleware/isAuth';
 
-// @route  GET,POST api/users
-// @desc   Register, Login Users
+// @route   GET,POST api/users,
+// @desc   Register, Login Users,
 // @access    Public
 
 userRouter.get('/', isAuth, getUsers);

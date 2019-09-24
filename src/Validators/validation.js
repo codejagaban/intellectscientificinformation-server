@@ -10,9 +10,9 @@ export const userSignUpValidation =
 
 [
     // validators for throwing errors
-    check('firstName', 'Full Name is required').not().isEmpty(),
-    check('lastName', 'Full Name is required').not().isEmpty(),
-    check('jobTitle', 'Full Name is required').not().isEmpty(),
+    check('firstName', 'First Name is required').not().isEmpty(),
+    check('lastName', 'Last Name is required').not().isEmpty(),
+    check('jobTitle', 'Job Title  is required').not().isEmpty(),
     check('email', 'Email address is invalid').isEmail(),
     check('password', 'Please enter a password of 6 or more characters').isLength({min: 6})
 

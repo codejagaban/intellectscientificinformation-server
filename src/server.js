@@ -10,6 +10,7 @@ import adminRouter from './routers/api/admin';
 import Journals from './models/Journals';
 import User from './models/User';
 import coverageAreaRouter from './routers/api/journalCoverageArea';
+import authRouter from './routers/api/auth';
 
 const app = express();
 
@@ -22,7 +23,7 @@ app.use('/api/users', userRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/journals', journalsRouter);
 app.use('/api/coverage-area', coverageAreaRouter);
-
+app.use('/api/auth', authRouter);
 app.use('/api/profile', profile);
 
 app.use(bodyParser.urlencoded({ extended: false}));
