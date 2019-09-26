@@ -1,6 +1,6 @@
 import express from 'express';
 import isAuth from '../../middleware/isAuth';
-import { addNewJournal, getAllJournals, searchJournal } from '../../controllers/journalController';
+import { addNewJournal, getAllJournals, searchJournal, getJournalByID } from '../../controllers/journalController';
 
 const journalsRouter = express.Router();
 
@@ -13,6 +13,8 @@ journalsRouter.post('/new', addNewJournal);
 journalsRouter.get('/master-list/:page/journals/:search', searchJournal);
 
 journalsRouter.get('/all', getAllJournals);
+
+journalsRouter.get('/:id', getJournalByID);
 
 
 export default journalsRouter;

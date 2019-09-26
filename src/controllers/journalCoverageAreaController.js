@@ -40,7 +40,7 @@ export const getAllCoverageArea =  async (req, res, next) => {
 
     .then(response => {
 
-        res.status(200).json({ coverageAreas:response})
+        res.status(200).json({coverageAreas: response})
         console.log(response)
     })
     .catch(err => {

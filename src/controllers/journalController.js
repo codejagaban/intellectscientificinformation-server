@@ -34,7 +34,6 @@ export const addNewJournal = async(req, res, next) => {
             res.status(201).json({
                 msg: ' New Journal created successfully'
             })
-            console.log(req.body);
 
 
 
@@ -70,7 +69,7 @@ export const searchJournal = async (req, res, next) => {
     // Declaring variable
 
     const page = req.params.page || 0; // Page
-    const pageSize = req.params.pageSize || 5;
+    const pageSize = req.params.pageSize || 10;
 
         // Declaring query based/search variables
        const  search = req.params.search || '1234';
@@ -135,6 +134,29 @@ export const searchJournal = async (req, res, next) => {
 
        })
 
+}
+
+
+export const getJournalByID = (req, res, next) => {
+    const id  = req.params.id;
+
+    Journal.findOne({
+        where: { id }
+    })
+    .then(journal => {
+        console.log(journal)
+        if (journal === null) {
+            res.status(404).json({ msg: 'Journal Not Found' })
+        } else {
+            res.status(200).json({ journal })
+        }
+    })
+
+
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({err})
+    })
 
 
 }
