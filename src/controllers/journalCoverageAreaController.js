@@ -19,8 +19,7 @@ export const addCoverageArea = async(req, res, next) => {
 
         res.status(201).json({
             msg: ' New Coverage Area  Added successfully'
-        })
-        console.log(req.body);
+        });
 
     }
     catch (err) {
@@ -36,19 +35,54 @@ export const addCoverageArea = async(req, res, next) => {
 
 export const getAllCoverageArea =  async (req, res, next) => {
 
-    CoverageArea.findAll({})
+    CoverageArea.findAndCountAll({})
 
     .then(response => {
 
-        res.status(200).json({coverageAreas: response})
-        console.log(response)
+        res.status(200).json({coverageAreas: response.rows, count: response.count});
     })
     .catch(err => {
         res.status(500).json({err})
 
         next();
 
-        console.log(err)
+        console.log({err})
     })
 
+}
+
+
+export const editCoverageArea = (req, res, next) => {
+    const {newCoverageAreaDetails} = req.body;
+    const {id} = req.params;
+    CoverageArea.update(
+        { coverageArea: newCoverageAreaDetails }, {
+        where : {
+            id : id
+        }
+    } )
+    .then(edittedcoverageArea =>  {
+    res.status(200).json( { msg: 'Journal editted successfully' } )
+    })
+    .catch(err => {
+        res.status(500).json({ msg: err })
+        console.log({ err })
+        next()
+    })
+}
+
+
+export const deleteCoverageArea = (req, res, next) => {
+    const id  = req.params.id;
+    console.log(id)
+    CoverageArea.destroy({ where: {
+        id: id
+    } } )
+    .then(destroyed => {
+        res.status(200).json({ msg: 'Coverage Area deleted successfully' })
+    })
+    .catch(err => {
+        res.status(500).json({ msg: err })
+        next()
+    })
 }

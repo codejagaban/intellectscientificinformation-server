@@ -11,6 +11,7 @@ import Journals from './models/Journals';
 import User from './models/User';
 import coverageAreaRouter from './routers/api/journalCoverageArea';
 import authRouter from './routers/api/auth';
+import CoverageArea from './models/JournalCoverageArea';
 
 const app = express();
 
@@ -33,8 +34,6 @@ app.use(bodyParser.urlencoded({ extended: false}));
 // associates the data in the DB
 
 User.hasMany(Journals);
-
-
 
 const port = process.env.PORT || 5000 ;
 app.listen( port, () => {

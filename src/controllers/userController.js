@@ -5,6 +5,10 @@ import User from '../models/User';
 import bcrypt from 'bcryptjs';
 require('dotenv').config();
 import jwt from 'jsonwebtoken';
+import moment from 'moment';
+
+import Sequelize from 'sequelize';
+
 
 // @route  GET api/users
 // @desc   Register Users
@@ -12,6 +16,7 @@ import jwt from 'jsonwebtoken';
 
 
 
+const Op = Sequelize.Op; //DB Operator
 // sign up a new user
 export const userSignUp = (
 
@@ -59,10 +64,9 @@ export const userSignUp = (
 
         // res.send()
         // Return jsonwebtoken
-        console.log(req.body);
 
     } catch (err) {
-        console.log(err)
+        console.log({err})
         res.status(500).send('Server Error');
     }
 });
@@ -101,6 +105,7 @@ export const userLogin = async (req, res, next) => {
         }
         const payload = {
             user: user.id,
+            isAdmin: user.isAdmin
         }
         jwt.sign(
             payload,
@@ -108,34 +113,109 @@ export const userLogin = async (req, res, next) => {
             { expiresIn: 36000000 },
             (err, token)=> {
                 if(err) throw err;
-                res.json({ token })
+                res.json({ token, isAdmin: user.isAdmin })
             })
 
-        // Return jsonwebtoken
-        console.log(req.body);
+
 
     } catch (err) {
-        console.log(err)
+        console.log({err})
         res.status(500).send('Server Error');
     }
 
 }
 
 // get all users
-export const getUsers = async(req, res, next) => {
+export const getUsers = (req, res, next) => {
 
-    await User.findAll({ attributes: { exclude: ["password"] } })
+     User.findAndCountAll({
+         where: {
+             isAdmin: false,
+         },
+         attributes: {
+             exclude: ["password"]
+         }
+     })
     .then(users => {
+
+
         if(!users) {
             res.status(404).json({msg: 'No user found'})
         }
+        // let recentUsers = null;
+        // user.map( user => {
+        //     let day =  new Date();
+        //     if(user.createAt <=  day.setDate(-5)) {
+        //         console.log(user)
+        //         return user
+        //     }
+        //     else {
+        //         console.log('they are all old users')
+        //     }
+        // } )
+        res.status(200).json({ allUsers: users.rows, count: users.count });
+    })
+    .catch(err => {
+        console.log({ err })
 
-        res.status(200).json({ users: users});
+        res.status(500).json({ msg: err })
     })
 
+}
+
+
+export const getMonthlyUsers = (req, res, next) => {
+
+
+    // get all the new users for this month
+    const now = new Date();
+
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear()
+
+    User.findAndCountAll({
+        where: {
+           [Op.and] :
+           [ {createdAt : {[Op.substring] : `${thisYear}-${thisMonth + 1}`}},
+           { isAdmin: false }
+        ]
+
+        }
+    })
+    .then(monthlyUsers => {
+        res.status(200).json({ totalMonthlyUsersCount: monthlyUsers.count })
+    })
+
+    .catch(err => {
+        console.log({err})
+        res.status(500).json({ msg: err })
+    })
+
+}
 
 
 
 
+// get most recent  5 journals submitted
+export const mostRecentUsers = (req, res) => {
+    const now = moment().format()
 
+    const lastFive = moment().subtract(5, 'days');
+    User.findAndCountAll({
+        where: {
+                createdAt: {
+                    [Op.between] : [ lastFive, now ]
+                }
+            },
+        attributes: { exclude: ["password"] }
+    })
+
+    .then(mostRecent => {
+        res.status(200).json({ mostRecentUsers: mostRecent.rows, mostRecentUsersCount: mostRecent.count })
+    })
+
+    .catch(err => {
+        console.log({err})
+        res.status(500).json({ msg: err })
+    })
 }

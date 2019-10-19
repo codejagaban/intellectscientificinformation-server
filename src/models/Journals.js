@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
-import sequelize from '../db'
+import sequelize from '../db';
+
 
 class Journal extends Sequelize.Model {}
 Journal.init({
@@ -44,10 +45,7 @@ Journal.init({
         type: Sequelize.STRING,
         allowNull: false,
     },
-    worldOfScience: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
+
 
     journalCitationResult: {
         type: Sequelize.STRING,
@@ -80,6 +78,10 @@ Journal.init({
         allowNull: false,
     },
     coverageArea: {
+        type: Sequelize.JSON,
+        allowNull: false,
+    },
+    impactFactor: {
         type: Sequelize.STRING,
         allowNull: false,
     },
@@ -140,7 +142,6 @@ Journal.init({
 
 },
  { sequelize, modelName: 'journal', });
-
 sequelize.sync();
 
 export default Journal;
