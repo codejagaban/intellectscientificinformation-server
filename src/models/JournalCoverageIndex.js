@@ -1,8 +1,8 @@
 import Sequelize from 'sequelize';
 import sequelize from '../db'
 
-class CoverageArea extends Sequelize.Model {}
-CoverageArea.init({
+class CoverageIndex extends Sequelize.Model {}
+CoverageIndex.init({
     id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -10,14 +10,14 @@ CoverageArea.init({
         autoIncrement: true,
     },
 
-    coverageArea: {
+    coverageIndex: {
         type: Sequelize.STRING,
         allowNull: false,
     },
 
 },
- { sequelize, modelName: 'coverageArea', });
+ { sequelize, modelName: 'coverageIndex', });
 
 sequelize.sync()
 
-    export default CoverageArea;
+    export default CoverageIndex;

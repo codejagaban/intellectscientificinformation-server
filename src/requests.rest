@@ -1,0 +1,22 @@
+
+##Search Journals
+# POST http://localhost:5000/api/journals?page=1&limit=2
+
+# content-type: application/json
+
+# {
+#     "search": "first"
+# }
+
+
+##Get all journals
+# GET http://localhost:5000/api/journals/all?page=1&limit=5
+
+##Get all pending journals
+GET http://localhost:5000/api/journals/pending?page=1&limit=5
+
+
+
+##get a journal by Id
+# GET  http://localhost:5000/api/journals/9
+

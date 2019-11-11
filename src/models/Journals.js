@@ -41,13 +41,9 @@ Journal.init({
         allowNull: true,
 
     },
-    issn : {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
 
 
-    journalCitationResult: {
+    googleScholarH: {
         type: Sequelize.STRING,
         allowNull: false,
     },
@@ -73,28 +69,21 @@ Journal.init({
         type: Sequelize.STRING,
         allowNull: false,
     },
-    journalPeerPolicy: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
-    coverageArea: {
+
+    subjectCategory: {
         type: Sequelize.JSON,
         allowNull: false,
     },
-    impactFactor: {
+    coverageIndex: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
     },
-
     // editorial info
     editorialName: {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    editorialPhone: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
+
     editorialEmail: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -122,18 +111,6 @@ Journal.init({
         type: Sequelize.STRING,
         allowNull: false,
     },
-
-    publicationOwner: {
-        type: Sequelize.STRING,
-        allowNull: false,
-    },
-
-    journalConjunction: {
-        type: Sequelize.STRING,
-        allowNull: true ,
-    },
-
-
 
     isApproved: {
         type: Sequelize.BOOLEAN,

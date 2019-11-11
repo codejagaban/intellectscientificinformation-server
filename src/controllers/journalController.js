@@ -1,4 +1,4 @@
-import express from 'express';
+
 import Journal from '../models/Journals';
 import Sequelize from 'sequelize';
 import moment from 'moment';
@@ -10,9 +10,8 @@ export const addNewJournal = async(req, res, next) => {
 
 
     const  { title, publisher, issn, e_issn, journalPrimaryLang, journalSecondaryLang, journalHomePageUrl,
-        //  worldOfScience,
-          journalCitationResult, coverageArea, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear,
-    journalRecentIssue, journalPeerPolicy, editorialName,impactFactor, editorialPhone, editorialEmail, editorialJobTitle, publisherCountry, publisherAddress, publicationModel, publicationOwner, journalConjunction, isApproved,  userId } = req.body;
+          subjectCategory, coverageIndex, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear,
+    journalRecentIssue, editorialName,googleScholarH, editorialPhone, editorialEmail, editorialJobTitle, publisherCountry, publisherAddress, publicationModel, isApproved } = req.body;
 
 
 
@@ -32,8 +31,9 @@ export const addNewJournal = async(req, res, next) => {
         else {
             const newJournal = new Journal({ title, publisher, issn, e_issn, journalPrimaryLang, journalSecondaryLang, journalHomePageUrl,
                 //  worldOfScience,
-                  journalCitationResult, coverageArea, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear, impactFactor,
-                journalRecentIssue, journalPeerPolicy, editorialName, editorialPhone, editorialEmail, editorialJobTitle,  isApproved, publisherCountry, publisherAddress, publicationModel, publicationOwner, journalConjunction, userId })
+
+                  subjectCategory, coverageIndex, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear, googleScholarH,
+                journalRecentIssue, editorialName, editorialPhone, editorialEmail, editorialJobTitle,  isApproved, publisherCountry, publisherAddress, publicationModel,  })
 
              newJournal.save();
 
@@ -59,6 +59,7 @@ export const addNewJournal = async(req, res, next) => {
 
 
 export const getAllJournalsCount = async(req, res, next) => {
+
     Journal.findAndCountAll()
     .then(journals => {
         res.status(200).json({ journalsCount: journals.count})
@@ -71,23 +72,16 @@ export const getAllJournalsCount = async(req, res, next) => {
 }
 
 export const getAllJournals = (req, res, next) => {
-    const page = Number(req.params.page);
-    const pageSize = 10;
-    const paginate = ({ page, pageSize }) => {
-        const offset = page * pageSize;
-        const limit = offset + pageSize
+  // Declaring pagination  variables
+  const page =  parseInt(req.query.page)
+  const limit = parseInt(req.query.limit)
 
-        return {
-          offset,
-          limit,
-        }
-       }
-
-
-
+  const startIndex = ( page - 1 ) * limit
+  const endIndex = page * limit;
 
     Journal.findAndCountAll({
-        ...paginate({ page, pageSize }),
+        limit: endIndex,
+        offset: startIndex
     })
     .then(journals => {
         if(!journals) {
@@ -95,13 +89,26 @@ export const getAllJournals = (req, res, next) => {
         }
 
         else {
-        res.status(200).json({
-             journalsCount: journals.count,
-            //  prevPage: page === 0 ? null : page -1,
-            //     currentPage: page,
-            //     nextPage: (journals.count / pageSize) < 0 ? null : page + 1,
-            //     lastPage: (journals.count / pageSize) < 0 ? (journals.count / pageSize) -1 : null,
-                journals: journals.rows,})
+            const allJournals = {  }
+            if(endIndex < journals.count) {
+                allJournals.next = {
+                    page: page + 1,
+                    limit: limit
+                }
+
+            }
+            if ( startIndex > 0 ) {
+                allJournals.previous = {
+                    page: page - 1,
+                    limit: limit
+                }
+            }
+            allJournals.currentPage = page;
+               allJournals.journals = journals.rows;
+               allJournals.totalCount = journals.count;
+            res.status(200).json({
+                result: allJournals
+             })
         }
     })
 
@@ -113,43 +120,34 @@ export const getAllJournals = (req, res, next) => {
 
 }
 
-export const searchJournal = async (req, res, next) => {
+export const searchJournal = async (req, res) => {
     // First implement the pagination
 
+    console.log(req.query)
+    // Declaring pagination  variables
+    const page =  parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
 
-    // Declaring variable
-
-    const page = Number(req.params.page); // Page
-    const pageSize = Number(req.params.pageSize) || 5;
+    const startIndex = ( page - 1 ) * limit
+    const endIndex = page * limit;
 
         // Declaring query based/search variables
-       const  search = req.params.search || '1234';
+       const  search = req.body.search || '';
 
     const journalPrimaryLang = req.body.journalPrimaryLang || '';
     const journalCountry = req.body.journalCountry || '';
     const journalFrequency = req.body.journalFrequency || '';
-    const coverageArea = req.body.coverageArea || '';
-    const journalPeerPolicy = req.body.journalPeerPolicy || '';
+    const coverageIndex = req.body.coverageIndex || '';
 
 
-
-       const paginate = ({ page, pageSize }) => {
-        const offset = page * pageSize;
-        const limit = offset + pageSize
-
-        return {
-          offset,
-          limit,
-        }
-       }
-
+    // create a pagination Object
 
     //    create a search query based on inputs and querys from the user
        await Journal.findAndCountAll({
            where: {
             [Op.or]:
               [ {title: {   [Op.substring]: search}},
-              {coverageArea: {   [Op.substring]: search}},
+              {coverageIndex: {   [Op.substring]: search}},
               {issn: {   [Op.substring]: search}},
              ],
              [Op.and]:
@@ -157,32 +155,44 @@ export const searchJournal = async (req, res, next) => {
             {journalCountry: {[Op.substring]: journalCountry}},
              {journalFrequency: {[Op.substring]: journalFrequency }},
              {journalPrimaryLang: {[Op.substring]: journalPrimaryLang }},
-             {coverageArea: {[Op.substring]: coverageArea }},
-             {journalPeerPolicy: {[Op.substring]: journalPeerPolicy }}
+             {coverageIndex: {[Op.substring]: coverageIndex }},
 
             ]
            },
-           ...paginate({ page, pageSize }),
-
-
+           attributes: { exclude: [ 'subjectCategory', 'journalReviewLastYear', 'journalSecondaryLang',
+            'journalRecentIssue', 'editorialName','googleScholarH', 'editorialPhone', 'editorialEmail','journalFirstYear','editorialJobTitle','journalHomePageUrl'] },
+           limit: endIndex,
+           offset: startIndex
 
        })
-       .then(journal => {
-           if(journal.count === 0) {
+       .then(journals => {
+           if(journals.count === 0) {
                res.status(404).json({
                    msg: 'No Journal found in out collection'
                })
            }
            else {
-            res.status(200).json({
-                totalJournals: journal.count,
-              //   totalPageSize: ,
-                prevPage: page === 0 ? null : page -1,
-                currentPage: page,
-                nextPage: (journal.count / pageSize) -1 < page + 1 ? null : page + 1,
-                lastPage: (journal.count / pageSize) < 0 ? (journal.count / pageSize) -1 : null,
-                journals: journal.rows,
+            const searchResults = {  }
 
+            if ( startIndex > 0 ) {
+                searchResults.previous = {
+                    page: page - 1,
+                    limit: limit
+                }
+            }
+            if(endIndex < journals.count) {
+                searchResults.next = {
+                    page: page + 1,
+                    limit: limit
+                }
+
+            }
+
+            searchResults.currentPage = page;
+               searchResults.journals = journals.rows;
+               searchResults.totalCount = journals.count;
+            res.status(200).json({
+                searchResults
              })
            }
        })
@@ -190,53 +200,64 @@ export const searchJournal = async (req, res, next) => {
            res.status(500).json( {err});
            console.log({err});
 
-           next()
 
        })
 
 }
 
 
-export const getJournalByID = (req, res, next) => {
-    const id  = req.params.id;
-
-    Journal.findOne({
-        where: { id }
-    })
-    .then(journal => {
-        if (journal === null) {
-            res.status(404).json({ msg: 'Journal Not Found' })
-        } else {
-            res.status(200).json({ journal })
-        }
-    })
-
-
-    .catch(err => {
-        console.log({err})
-        res.status(500).json({err})
-    })
-
-
-}
-
-
 // get all pending journals needing approval from admin
-export const pendingJournals = (req, res, next ) => {
+export const pendingJournals = (req, res ) => {
+      // Declaring pagination  variables
+      const page =  parseInt(req.query.page)
+      const limit = parseInt(req.query.limit)
+
+      const startIndex = ( page - 1 ) * limit
+      const endIndex = page * limit;
+
+
     Journal.findAndCountAll({
-        where: {
-            isApproved : false
-        }
+        where: { isApproved: false },
+        limit: endIndex,
+        offset: startIndex
+
     })
-    .then(journals => {
-        res.status(200).json({ pendingJournals: journals.rows, pendingJournalsCount: journals.count })
+    .then(
+        journals => {
+            if(!journals || journals.count === 0) {
+                res.status(404).json({ msg: 'There are currently no pending journals' })
+            }
+            else {
+                const result = {  }
+
+                if ( startIndex > 0 ) {
+                    result.previous = {
+                        page: page - 1,
+                        limit: limit
+                    }
+                }
+                if(endIndex < journals.count) {
+                    result.next = {
+                        page: page + 1,
+                        limit: limit
+                    }
+
+                }
+
+                result.currentPage = page;
+                   result.journals = journals.rows;
+                   result.totalCount = journals.count;
+                res.status(200).json({
+                    result
+                 })
+            }
+
     })
 
     .catch(err => {
         console.log({ err })
-    res.status(500).json({ msg: err })
+    res.status(500).json({ msg: 'Oops Something went wrong, please try again later' })
 
-    next()
 
     })
 }
@@ -318,4 +339,85 @@ Journal.findAndCountAll({
     console.log({ err })
     res.status(500).json({ msg: err })
 })
+}
+
+
+
+// get a specific journal by ID
+export const getJournalById = (req, res) => {
+    const id = req.params.id;
+    Journal.findOne({
+        where: { id }
+    })
+    .then(journal => {
+        if(!journal) {
+            res.status(404).json({ msg: 'Oops we couldn\'t get the journal you were looking for or it might have been deleted' })
+        }
+        else {
+            res.status(200).json({ journal })
+        }
+    })
+
+    .catch(err => {
+        console.log({ err })
+        res.status(500).json({ msg: 'Something went wrong, please  try again later' })
+
+    })
+
+}
+
+
+export const editJournal = (req, res, ) => {
+    const { title, publisher, issn, e_issn, journalPrimaryLang, journalSecondaryLang, journalHomePageUrl,
+    subjectCategory, coverageIndex, journalCountry, journalFrequency, journalFirstYear, journalReviewLastYear,
+journalRecentIssue, editorialName,googleScholarH, editorialPhone, editorialEmail, editorialJobTitle, publisherCountry, publisherAddress, publicationModel,} = req.body.newJournalDetails;
+    const {id} = req.params;
+    console.log(id)
+    console.log(title)
+    Journal.update({
+        title,
+        publisher,
+        issn,
+        e_issn,
+        journalPrimaryLang,
+        journalSecondaryLang,
+        journalHomePageUrl,
+        subjectCategory,
+        coverageIndex, journalCountry,
+        journalFrequency,
+        journalFirstYear,
+        journalReviewLastYear,
+        journalRecentIssue,
+        editorialName,
+        googleScholarH,
+        editorialPhone,
+        editorialEmail,
+        editorialJobTitle,
+        publisherCountry,
+        publisherAddress,
+        publicationModel,},
+        { where:  { id: id }}
+ )
+    .then(edittedJournal =>  {
+    res.status(200).json( { msg: ' Journal editted successfully' } )
+    })
+    .catch(err => {
+        res.status(500).json({ msg: err })
+        console.log({ err })
+        next()
+    })
+}
+
+
+
+export const deleteJournal = (req, res, next) => {
+    const id  = req.params.id;
+    console.log(id)
+    Journal.destroy({ where: {id} } )
+    .then(destroyed => {
+        res.status(200).json({ msg: 'Journal deleted successfully' })
+    })
+    .catch(err => {
+        res.status(500).json({ msg: err })
+    })
 }
