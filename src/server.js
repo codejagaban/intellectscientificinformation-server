@@ -18,7 +18,7 @@ app.use((req,res,next) => {
     next();
   });
 
-
+  app.use(express.static(`${__dirname}/public_html`))
 
 
 app.use(express.json( { extende: false}))
