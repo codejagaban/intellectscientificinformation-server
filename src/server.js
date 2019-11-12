@@ -11,6 +11,15 @@ import authRouter from './routers/api/auth';
 import mailRouter from './routers/api/mail';
 const app = express();
 
+app.use((req,res,next) => {
+    res.setHeader("Access-Control-Allow-Origin", '*');
+    res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
+    next();
+  });
+
+
+
 
 app.use(express.json( { extende: false}))
 // define routes
@@ -21,6 +30,8 @@ app.use('/api/coverage-index', coverageIndexRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/profile', profile);
 app.use('/api/mails', mailRouter);
+
+
 
 app.use(bodyParser.urlencoded({ extended: false}));
 
