@@ -73,7 +73,7 @@ export const userSignUp = (
 
 
 // Login A User
-export const userLogin = async (req, res, next) => {
+export const userLogin = async (req, res) => {
 
 
 
@@ -84,6 +84,7 @@ export const userLogin = async (req, res, next) => {
         return res.status(400).json({ errors: errors.array() })
     }
         const {email, password } = req.body
+
     try {
         // check if there is already a user with that request email and
         //throw error if it already exist
@@ -93,7 +94,7 @@ export const userLogin = async (req, res, next) => {
 
         if(!user){
             res.status(401).json({errors: [{msg: 'Invalid Login Details'}]})
-        }
+        } else {
 
         // check if the password from the request is the same as the password from DB
         const isMatch = await bcrypt.compare(password, user.password);
@@ -102,19 +103,24 @@ export const userLogin = async (req, res, next) => {
         if (!isMatch) {
           res.status(401).json({errors:[{msg: 'Invalid Login Details'}]})
 
+        } else {
+            const payload = {
+                user: user.id,
+                isAdmin: user.isAdmin
+            }
+            jwt.sign(
+                payload,
+                 process.env.SECRET_JWT,
+                { expiresIn: 36000000 },
+                (err, token)=> {
+                    if(err) throw err;
+                    res.json({ token, isAdmin: user.isAdmin })
+                })
+
+
         }
-        const payload = {
-            user: user.id,
-            isAdmin: user.isAdmin
+
         }
-        jwt.sign(
-            payload,
-             process.env.SECRET_JWT,
-            { expiresIn: 36000000 },
-            (err, token)=> {
-                if(err) throw err;
-                res.json({ token, isAdmin: user.isAdmin })
-            })
 
 
 
@@ -126,7 +132,7 @@ export const userLogin = async (req, res, next) => {
 }
 
 // get all users
-export const getUsers = (req, res, next) => {
+export const getUsers = (req, res, ) => {
 
      User.findAndCountAll({
          where: {
