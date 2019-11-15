@@ -21,14 +21,19 @@
 # GET  http://localhost:5000/api/journals/9
 
 # Register a user VW4p9Q0Bn9
-POST  http://localhost:5000/api/users/signup
-Content-Type: application/json
+# POST  http://localhost:5000/api/users/signup
+# Content-Type: application/json
 
-{
-    "firstName" : "admin",
-    "lastName" : "isi",
-    "email" : "admin@intellectscientificinformation.com",
-    "jobTitle" : "admin",
-    "password": "VW4p9Q0Bn9"
+# {
+#     "firstName" : "admin",
+#     "lastName" : "isi",
+#     "email" : "admin@intellectscientificinformation.com",
+#     "jobTitle" : "admin",
+#     "password": "VW4p9Q0Bn9"
 
-}
+# }
+
+
+
+GET http://intellectscientificinformation.com:5000/api/coverage-index
+

@@ -9,6 +9,7 @@ import adminRouter from './routers/api/admin';
 import coverageIndexRouter from './routers/api/journalCoverageIndex';
 import authRouter from './routers/api/auth';
 import mailRouter from './routers/api/mail';
+const path = require('path')
 const app = express();
 
 app.use((req,res,next) => {
@@ -18,7 +19,7 @@ app.use((req,res,next) => {
     next();
   });
 
-  app.use(express.static(`${__dirname}/public_html`))
+  // app.use(express.static(`${__dirname}/public_html`))
 
 
 app.use(express.json( { extende: false}))
@@ -32,6 +33,8 @@ app.use('/api/profile', profile);
 app.use('/api/mails', mailRouter);
 
 
+// app.get(express.static('build'));
+// app.get('*', (req, res)=>{  res.sendFile(path.join(__dirname, 'build', 'index.html'));})
 
 app.use(bodyParser.urlencoded({ extended: false}));
 
@@ -41,7 +44,7 @@ app.use(bodyParser.urlencoded({ extended: false}));
 
 // User.hasMany(Journals);
 
-const port = process.env.PORT || 5000 ;
+const port = process.env.PORT || 8080 ;
 app.listen( port, () => {
     console.log(`Server has  started at port  ${port}`);
 })
