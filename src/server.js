@@ -21,7 +21,6 @@ app.use((req,res,next) => {
 
   // app.use(express.static(`${__dirname}/public_html`))
 
-
 app.use(express.json( { extende: false}))
 // define routes
 app.use('/api/users', userRouter);
@@ -44,7 +43,7 @@ app.use(bodyParser.urlencoded({ extended: false}));
 
 // User.hasMany(Journals);
 
-const port = process.env.PORT || 8080 ;
+const port = process.env.PORT || 8000 ;
 app.listen( port, () => {
     console.log(`Server has  started at port  ${port}`);
 })

@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon --exec babel-node ./src/server.js",
-    "build": "webpack --mode=development ./src/server.js",
+    "build": "webpack --mode=production ./src/server.js",
     "serve": "node /dist/serverbundle.js",
     "clean": "rm -rf build && mkdir build"
   },
