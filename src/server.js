@@ -19,7 +19,8 @@ app.use((req,res,next) => {
     next();
   });
 
-  // app.use(express.static(`${__dirname}/public_html`))
+
+  sequelize
 
 app.use(express.json( { extende: false}))
 // define routes

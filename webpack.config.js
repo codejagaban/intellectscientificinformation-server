@@ -10,4 +10,8 @@ module.exports = {
   },
   target: "node",
     externals: ['pg', 'sqlite3', 'tedious', 'pg-hstore'],
+    optimization: {
+      // We no not want to minimize our code.
+      minimize: false
+  },
 };
