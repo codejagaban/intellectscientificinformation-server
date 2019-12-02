@@ -421,3 +421,12 @@ export const deleteJournal = (req, res, next) => {
         res.status(500).json({ msg: err })
     })
 }
+
+
+
+//gets all coverage area depending on the index;
+export const getAllJournalsByIndex = (req, res) => {
+    const coverageIndex = req.body;
+    Journal.findAll()
+
+}
