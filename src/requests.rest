@@ -1,12 +1,8 @@
 
-##Search Journals
-# POST http://localhost:5000/api/journals?page=1&limit=2
+#Search Journals
+# POST http://localhost:5000/api/journals?page=4&limit=10
 
 # content-type: application/json
-
-# {
-#     "search": "first"
-# }
 
 
 ##Get all journals
@@ -35,5 +31,12 @@
 
 
 
-GET http://intellectscientificinformation.com:5000/api/coverage-index
+# GET http://intellectscientificinformation.com:5000/api/coverage-index
+
+POST http://localhost:5000/api/journals/coverage-indexes?page=3&limit=15
+Content-Type: application/json 
+
+{   
+    "coverageIndex" : "Social Science coverage Index"
+}
 

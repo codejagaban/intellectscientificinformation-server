@@ -7,9 +7,8 @@ Journal.init({
     // Journal Info
     id: {
         type: Sequelize.INTEGER,
-        allowNull ::
-
-        primaryKey: : true,
+        allowNull : false,
+        primaryKey: true,
         autoIncrement: true,
     },
     title: {

@@ -1,6 +1,6 @@
 import express from 'express';
 import isAuth from '../../middleware/isAuth';
-import { addNewJournal, getAllJournalsCount, searchJournal, getJournalByID, getMonthlyJournal, pendingJournals, mostRecentJournals, getYearlyJournals, getAllJournals, editJournal, deleteJournal, getJournalById } from '../../controllers/journalController';
+import { addNewJournal, getAllJournalsCount, searchJournal, getJournalByID, getMonthlyJournal, pendingJournals, mostRecentJournals, getYearlyJournals, getAllJournals, editJournal, deleteJournal, getJournalById, getJournalsByIndex } from '../../controllers/journalController';
 
 const journalsRouter = express.Router();
 
@@ -16,7 +16,7 @@ journalsRouter.post('/new', addNewJournal);
 journalsRouter.post('/', searchJournal);
 journalsRouter.get('/pending', pendingJournals);
 
-
+journalsRouter.post('/coverage-indexes', getJournalsByIndex)
 journalsRouter.get('/all-count', getAllJournalsCount);
 
 journalsRouter.get('/monthly', getMonthlyJournal);

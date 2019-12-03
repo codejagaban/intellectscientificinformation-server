@@ -19,7 +19,10 @@ export const addNewJournal = async(req, res, next) => {
         where: {
             [Op.or]:
             [{title},
-            {issn}]
+            {issn}],
+            [Op.and]: [
+                coverageIndex
+            ]
         }
     })
 
@@ -80,7 +83,7 @@ export const getAllJournals = (req, res, next) => {
   const endIndex = page * limit;
 
     Journal.findAndCountAll({
-        limit: endIndex,
+        limit: limit,
         offset: startIndex
     })
     .then(journals => {
@@ -134,10 +137,9 @@ export const searchJournal = async (req, res) => {
         // Declaring query based/search variables
        const  search = req.body.search || '';
 
-    const journalPrimaryLang = req.body.journalPrimaryLang || '';
-    const journalCountry = req.body.journalCountry || '';
-    const journalFrequency = req.body.journalFrequency || '';
-    const coverageIndex = req.body.coverageIndex || '';
+    const journalPrimaryLang = req.body.journalPrimaryLang || null;
+    const journalCountry = req.body.journalCountry || null;
+    const journalFrequency = req.body.journalFrequency || null;
 
 
     // create a pagination Object
@@ -147,21 +149,17 @@ export const searchJournal = async (req, res) => {
            where: {
             [Op.or]:
               [ {title: {   [Op.substring]: search}},
-              {coverageIndex: {   [Op.substring]: search}},
               {issn: {   [Op.substring]: search}},
-             ],
-             [Op.and]:
-             [
+            
             {journalCountry: {[Op.substring]: journalCountry}},
              {journalFrequency: {[Op.substring]: journalFrequency }},
              {journalPrimaryLang: {[Op.substring]: journalPrimaryLang }},
-             {coverageIndex: {[Op.substring]: coverageIndex }},
 
-            ]
+            ],
            },
            attributes: { exclude: [ 'subjectCategory', 'journalReviewLastYear', 'journalSecondaryLang',
             'journalRecentIssue', 'editorialName','googleScholarH', 'editorialPhone', 'editorialEmail','journalFirstYear','editorialJobTitle','journalHomePageUrl'] },
-           limit: endIndex,
+           limit: limit,
            offset: startIndex
 
        })
@@ -218,7 +216,7 @@ export const pendingJournals = (req, res ) => {
 
     Journal.findAndCountAll({
         where: { isApproved: false },
-        limit: endIndex,
+        limit: limit,
         offset: startIndex
 
     })
@@ -424,9 +422,67 @@ export const deleteJournal = (req, res, next) => {
 
 
 
-//gets all coverage area depending on the index;
-export const getAllJournalsByIndex = (req, res) => {
-    const coverageIndex = req.body;
-    Journal.findAll()
+
+
+//Gets all the journals from the DB by a specific index
+
+export const getJournalsByIndex = (req, res) => {
+
+      // Declaring pagination  variables
+      const page =  parseInt(req.query.page)
+      const limit = parseInt(req.query.limit)
+
+      const startIndex = ( page - 1 ) * limit
+      const endIndex = page * limit;
+
+
+
+    const  { coverageIndex }  = req.body;
+
+    Journal.findAndCountAll({
+        where: {
+            coverageIndex : coverageIndex
+        },
+        offset: startIndex,
+        limit: limit,
+    })
+    .then(journals => {
+        if(journals.count === 0) {
+            res.status(404).json({
+                msg: 'No Journal found in this collection'
+            })
+        }
+        else {
+         const journalResults = {  }
+
+         if ( startIndex > 0 ) {
+             journalResults.previous = {
+                 page: page - 1,
+                 limit: limit
+             }
+         }
+         if(endIndex < journals.count) {
+             journalResults.next = {
+                 page: page + 1,
+                 limit: limit
+             }
+
+         }
+
+         journalResults.currentPage = page;
+            journalResults.journals = journals.rows;
+            journalResults.totalCount = journals.count;
+         res.status(200).json({
+             journalResults
+          })
+        }
+    })
+    .catch(err =>{
+        res.status(500).json( {err});
+        console.log({err});
+
+
+    })
+
 
 }
