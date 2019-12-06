@@ -37,6 +37,6 @@ POST http://localhost:5000/api/journals/coverage-indexes?page=3&limit=15
 Content-Type: application/json 
 
 {   
-    "coverageIndex" : "Social Science coverage Index"
+    "coverageIndex" : "Science coverage Index"
 }
 

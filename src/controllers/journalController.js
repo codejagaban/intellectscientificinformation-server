@@ -1,9 +1,13 @@
 
-import Journal from '../models/Journals';
+import Journal from '../models/Journal';
 import Sequelize from 'sequelize';
 import moment from 'moment';
 
 const Op = Sequelize.Op; //DB Operator
+
+
+
+// const DBIndex = 
 
 export const addNewJournal = async(req, res, next) => {
 
@@ -128,10 +132,10 @@ export const searchJournal = async (req, res) => {
 
     console.log(req.query)
     // Declaring pagination  variables
-    const page =  parseInt(req.query.page)
-    const limit = parseInt(req.query.limit)
+    const page =  parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
 
-    const startIndex = ( page - 1 ) * limit
+    const startIndex = ( page - 1 ) * limit;
     const endIndex = page * limit;
 
         // Declaring query based/search variables
@@ -139,7 +143,7 @@ export const searchJournal = async (req, res) => {
 
     const journalPrimaryLang = req.body.journalPrimaryLang || null;
     const journalCountry = req.body.journalCountry || null;
-    const journalFrequency = req.body.journalFrequency || null;
+    const journalFrequency = req.body.journalFrequency || null; 
 
 
     // create a pagination Object
@@ -148,15 +152,17 @@ export const searchJournal = async (req, res) => {
        await Journal.findAndCountAll({
            where: {
             [Op.or]:
-              [ {title: {   [Op.substring]: search}},
+               [ {title: {   [Op.substring]: search}},
               {issn: {   [Op.substring]: search}},
-            
-            {journalCountry: {[Op.substring]: journalCountry}},
-             {journalFrequency: {[Op.substring]: journalFrequency }},
-             {journalPrimaryLang: {[Op.substring]: journalPrimaryLang }},
+              ],
+              [Op.and] : [
+           journalCountry ? {journalCountry: {[Op.substring]: journalCountry}} : null,
+            journalFrequency ? {journalFrequency: {[Op.substring]: journalFrequency }} : null,
+            journalPrimaryLang ? {journalPrimaryLang: {[Op.substring]: journalPrimaryLang }} : null,
 
             ],
            },
+           order: ['title', 'DESC'],
            attributes: { exclude: [ 'subjectCategory', 'journalReviewLastYear', 'journalSecondaryLang',
             'journalRecentIssue', 'editorialName','googleScholarH', 'editorialPhone', 'editorialEmail','journalFirstYear','editorialJobTitle','journalHomePageUrl'] },
            limit: limit,
@@ -443,6 +449,7 @@ export const getJournalsByIndex = (req, res) => {
         where: {
             coverageIndex : coverageIndex
         },
+        order: ['title', 'DESC'],
         offset: startIndex,
         limit: limit,
     })
