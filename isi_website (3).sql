@@ -66,7 +66,6 @@ INSERT INTO `coverageIndices` (`id`, `coverageIndex`, `createdAt`, `updatedAt`) 
 --
 
 CREATE TABLE `journals` (
-  `id` int(11) NOT NULL,
   `title` varchar(100) DEFAULT NULL,
   `publisher` varchar(255) DEFAULT NULL,
   `issn` varchar(255) DEFAULT NULL,
@@ -81,14 +80,14 @@ CREATE TABLE `journals` (
   `googleScholarH` varchar(255) DEFAULT NULL,
   `journalRecentIssue` varchar(255) DEFAULT NULL,
   `subjectCategory` json DEFAULT NULL,
-  `coverageIndex` varchar(255) NOT NULL DEFAULT 'Social science coverage index',
+  `coverageIndex` varchar(255)  NULL DEFAULT 'Social science coverage index',
   `editorialName` varchar(255) DEFAULT NULL,
   `editorialEmail` varchar(255) DEFAULT NULL,
   `editorialJobTitle` varchar(255) DEFAULT NULL,
   `publisherCountry` varchar(255) DEFAULT NULL,
   `publisherAddress` varchar(255) DEFAULT NULL,
   `publicationModel` varchar(255) DEFAULT NULL,
-  `isApproved` tinyint(1) NOT NULL DEFAULT '1',
+  `isApproved` tinyint(1) NOT NULL DEFAULT '0',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

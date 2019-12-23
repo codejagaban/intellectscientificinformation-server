@@ -16,6 +16,11 @@
 ##get a journal by Id
 # GET  http://localhost:5000/api/journals/9
 
+##Delete A Particular Journal 
+# DELETE http://localhost:5000/api/journals/delete/7304
+
+
+
 # Register a user VW4p9Q0Bn9
 # POST  http://localhost:5000/api/users/signup
 # Content-Type: application/json
@@ -33,10 +38,9 @@
 
 # GET http://intellectscientificinformation.com:5000/api/coverage-index
 
-POST http://localhost:5000/api/journals/coverage-indexes?page=3&limit=15
+POST http://localhost:5000/api/journals/coverage-indexes?page=1&limit=15
 Content-Type: application/json 
 
 {   
     "coverageIndex" : "Science coverage Index"
 }
-

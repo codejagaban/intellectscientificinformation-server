@@ -24,9 +24,7 @@ export const addNewJournal = async(req, res, next) => {
             [Op.or]:
             [{title},
             {issn}],
-            [Op.and]: [
-                coverageIndex
-            ]
+                
         }
     })
 
@@ -88,6 +86,9 @@ export const getAllJournals = (req, res, next) => {
 
     Journal.findAndCountAll({
         limit: limit,
+        order: [
+            ['title', 'ASC']
+        ],
         offset: startIndex
     })
     .then(journals => {
@@ -130,7 +131,7 @@ export const getAllJournals = (req, res, next) => {
 export const searchJournal = async (req, res) => {
     // First implement the pagination
 
-    console.log(req.query)
+    console.log(req.body)
     // Declaring pagination  variables
     const page =  parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -144,6 +145,7 @@ export const searchJournal = async (req, res) => {
     const journalPrimaryLang = req.body.journalPrimaryLang || null;
     const journalCountry = req.body.journalCountry || null;
     const journalFrequency = req.body.journalFrequency || null; 
+    const coverageIndex = req.body.coverageIndex || []
 
 
     // create a pagination Object
@@ -156,13 +158,18 @@ export const searchJournal = async (req, res) => {
               {issn: {   [Op.substring]: search}},
               ],
               [Op.and] : [
-           journalCountry ? {journalCountry: {[Op.substring]: journalCountry}} : null,
-            journalFrequency ? {journalFrequency: {[Op.substring]: journalFrequency }} : null,
+            journalFrequency ? {journalFrequency:  journalFrequency } : null,  
             journalPrimaryLang ? {journalPrimaryLang: {[Op.substring]: journalPrimaryLang }} : null,
 
+            coverageIndex ?  {coverageIndex: {[Op.substring]: coverageIndex }}: null,
+              {isApproved: true },
+
             ],
+            
            },
-           order: ['title', 'DESC'],
+           order: [
+               ['title', 'ASC']
+           ],   
            attributes: { exclude: [ 'subjectCategory', 'journalReviewLastYear', 'journalSecondaryLang',
             'journalRecentIssue', 'editorialName','googleScholarH', 'editorialPhone', 'editorialEmail','journalFirstYear','editorialJobTitle','journalHomePageUrl'] },
            limit: limit,
@@ -301,7 +308,7 @@ export const getMonthlyJournal = (req, res) => {
 export const mostRecentJournals = (req, res) => {
     const now = moment().format()
 
-    const lastFive = moment().subtract(5, 'days');
+    const lastFive = moment().subtract(1, 'days');
     Journal.findAndCountAll({
         where: {
                 createdAt: {
@@ -449,7 +456,12 @@ export const getJournalsByIndex = (req, res) => {
         where: {
             coverageIndex : coverageIndex
         },
-        order: ['title', 'DESC'],
+        order: [
+            ['title', 'ASC']
+        ],  
+        attributes: { exclude: [ 'subjectCategory', 'journalReviewLastYear', 'journalSecondaryLang',
+        'journalRecentIssue', 'editorialName','googleScholarH', 'editorialPhone', 'editorialEmail','journalFirstYear','editorialJobTitle','journalHomePageUrl'] },
+        
         offset: startIndex,
         limit: limit,
     })
