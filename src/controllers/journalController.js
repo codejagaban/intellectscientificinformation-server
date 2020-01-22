@@ -451,10 +451,11 @@ export const getJournalsByIndex = (req, res) => {
 
 
     const  { coverageIndex }  = req.body;
-
+    // coverageIndex ?  {coverageIndex: {[Op.substring]: coverageIndex }}: null,
     Journal.findAndCountAll({
         where: {
-            coverageIndex : coverageIndex
+            
+            coverageIndex : { [Op.substring] : coverageIndex }
         },
         order: [
             ['title', 'ASC']
