@@ -12,6 +12,15 @@ import mailRouter from './routers/api/mail';
 const path = require('path')
 const app = express();
 
+
+app.use(express.static("../../client/build"));
+  
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../../client", "build", "index.html"));
+});
+
+
+
 app.use((req,res,next) => {
     res.setHeader("Access-Control-Allow-Origin", '*');
     res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
@@ -19,8 +28,6 @@ app.use((req,res,next) => {
     next();
   });
 
-
-  sequelize
 
 app.use(express.json( { extende: false}))
 // define routes
